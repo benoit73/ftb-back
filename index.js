@@ -1,11 +1,9 @@
-const path = require('path');
 const cookieParser = require('cookie-parser');
 const express = require('express');
 
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const app = express();
-const hostname = 'localhost'
+const hostname = '0.0.0.0';
 const port = '3000'
 
 
