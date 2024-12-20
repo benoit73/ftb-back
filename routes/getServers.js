@@ -23,7 +23,11 @@ router.get('/', async (req, res) => {
         servers.forEach(element => {
             containersNames.push(element.serverName)
         })
-        const containers = await container.listContainersByNames(containersNames);
+
+        if (containersNames)
+        {
+            const containers = await container.listContainersByNames(containersNames);
+        }
 
         const mergedList = [
             ...containers.map(item1 => {

@@ -20,6 +20,7 @@ class Server {
         const choosePortResult = await chooseFreePort.chooseFreePort();
         if (choosePortResult.success != true || Number.isInteger(choosePortResult.port) == false)
         {
+            console.log('Impossible de choisir un port libre (serverClass.js).')
             return {success: false}
         }     
         this.port = choosePortResult.port
@@ -31,6 +32,7 @@ class Server {
             let createServerDockerResult = await container.createServerDocker(this)
             if (createServerDockerResult.success != true)
             {
+                console.log('Impossible de créer le server docker.')
                 return {success: false}
             }
             return {success: true}

@@ -7,6 +7,7 @@ async function chooseFreePort()
 
     if (checkAvailablePortSQLResult.success == false || !checkAvailablePortSQLResult.port)
     {
+        console.log('Impossible de trouver un port via SQL.')
         return {success: false}
     }
     let port = checkAvailablePortSQLResult.port
@@ -33,10 +34,16 @@ async function checkAvailablePortSQL()
 {   
     const query = 'SELECT portNum FROM servers ORDER BY portNum DESC LIMIT 1';
     const result = await sql.queryWithParams(query);
-    if (result.data)
+    if (result.data[0])
     {
         return {success: true, port: result.data[0].portNum + 1}
     }
+    if (result.data)
+        {
+            return {success: true, port: 58100}
+        }
+    console.log('Erreur dans les résultats de checkAvailablePortSQL : ')
+    console.log(result)
     return {success: false}
 }
 

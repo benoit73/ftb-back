@@ -24,6 +24,8 @@ async function queryWithParams(strQuery, aData = false) {
         await connection.end(); // Fermer la connexion après chaque requête
     } catch (err) {
         console.error("Erreur SQL :", err);
+        console.error(aData);
+        console.error(strQuery);
         aReturn.error = err.message; // Ajout d'un message d'erreur dans le retour
     }
     return aReturn;

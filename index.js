@@ -1,8 +1,11 @@
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const express = require('express');
-
-
+const dotenv = require('dotenv');
+const env = process.env.NODE_ENV || 'development'; // Par défaut, développement
+dotenv.config({ path: `${__dirname}/.env.${env}` });
+/* dotenv.config({ path: `${__dirname}/.env.local` });
+ */
 const app = express();
 const hostname = '0.0.0.0';
 const port = '3000'
@@ -30,4 +33,5 @@ app.use('/getServers', getServersRoute);
 
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
+  console.log(process.env.BDD_USER);
 });
