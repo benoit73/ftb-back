@@ -4,7 +4,6 @@ const Modpack = require('../entity/modpackClass')
 
 class Container 
 {
-    
     async createServerDocker(server)
     {   
         try {
@@ -54,6 +53,46 @@ class Container
         } catch (error) {
           console.error('Erreur lors de la récupération des conteneurs :', error);
           throw error;
+        }
+    }
+
+    async actionOnContainer(serveur, action)
+    {
+        try{
+            const docker = new Docker;
+            const container = docker.getContainer(serveur.name);
+            console.log('action : ' + action)
+            switch(action){
+                case 'start':
+                    console.log('start !')
+                    await container.start(); 
+                    break;
+                case 'stop':
+                    console.log('stop !')
+                    await container.pause(); 
+                    break;
+                case 'delete':
+                    console.log('delete !')
+                    await container.remove();
+                    break;
+                case 'restart':
+                    console.log('restart !')
+                    await container.restart();
+                    break;
+                case 'unpause':
+                    console.log('unpause !')
+                    await container.unpause();
+                    break;
+                default:
+                    console.log('Mauvaise action actionOnContainer')
+                    return {success: false}
+            }
+                   
+            return {success: true};
+        }
+        catch(err){
+            console.log('erreur : ' + err)
+            return {success: false};
         }
     }
 

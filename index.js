@@ -23,6 +23,7 @@ const loginRoute = require('./routes/login');
 const modpacksRoute = require('./routes/modPacks');
 const createServerRoute = require('./routes/createServer');
 const getServersRoute = require('./routes/getServers');
+const actionOnServerRoute = require('./routes/actionOnServer');
 
 // Utiliser les routes avec un chemin de base
 app.use('/register', registerRoute);
@@ -30,6 +31,7 @@ app.use('/login', loginRoute);
 app.use('/modpacks', modpacksRoute);
 app.use('/createServer', createServerRoute);
 app.use('/getServers', getServersRoute);
+app.use('/actionOnServer', actionOnServerRoute);
 
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);

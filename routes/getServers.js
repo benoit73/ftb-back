@@ -13,59 +13,67 @@ router.get('/', async (req, res) => {
     const checkUserResult = checkUser.decodeJwt(cookie)
     const idUser = checkUserResult.userId;
     const container = new Container;
-    
+    let result = [];
     if (idUser && Number.isInteger(idUser))
     {
         const servers = await getServersSqlByIdUser(idUser);
-
         const containersNames = [];
 
         servers.forEach(element => {
             containersNames.push(element.serverName)
         })
 
-        if (containersNames)
+        if (containersNames && containersNames.length > 0)
         {
             const containers = await container.listContainersByNames(containersNames);
+            const mergedList = [
+                ...containers.map(item1 => {
+                  const match = servers.find(item2 => item2.serverName === item1.name);
+                  return match ? { ...item1, ...match } : item1;
+                }),
+                ...servers.filter(item2 => !containers.some(item1 => item1.name === item2.serverName))
+              ];
+            
+            mergedList.forEach(element => 
+            {
+                // Traduction de "state"
+                switch (element.state) 
+                {
+                    case 'running':
+                        element.state = 'Démarré';
+                        break;
+            
+                    case 'exited':
+                        element.state = 'Arrêté';
+                        break;
+                    
+                    case 'paused':
+                        element.state = 'En pause';
+                        break;
+            
+                }
+            
+                if (element.status)
+                {
+                    if (element.status.includes('(unhealthy)')) {
+                        element.status = 'Mauvais état';
+                    } 
+                    else if (element.status.includes('(healthy)')) {
+                        element.status = 'En forme';
+                    } 
+                    else if (element.status.includes('Exited')) {
+                        element.status = 'Arrêté';
+                    } 
+                    else if (element.status.includes('Paused')) {
+                        element.status = 'En pause';
+                    } 
+                }
+    
+            });
+            result = mergedList;
         }
 
-        const mergedList = [
-            ...containers.map(item1 => {
-              const match = servers.find(item2 => item2.serverName === item1.name);
-              return match ? { ...item1, ...match } : item1;
-            }),
-            ...servers.filter(item2 => !containers.some(item1 => item1.name === item2.serverName))
-          ];
-        
-          mergedList.forEach(element => {
-            // Traduction de "state"
-            switch (element.state) {
-                case 'running':
-                    element.state = 'Démarré';
-                    break;
-        
-                case 'exited':
-                    element.state = 'Arrêté';
-                    break;
-        
-            }
-        
-            if (element.status)
-            {
-                if (element.status.includes('(unhealthy)')) {
-                    element.status = 'Mauvais état';
-                } else if (element.status.includes('(healthy)')) {
-                    element.status = 'En forme';
-                } else if (element.status.includes('Exited')) {
-                    element.status = 'Arrêté';
-                } 
-            }
-
-        });
-        
-
-        res.send({success: true, data:mergedList})
-        console.log(mergedList)
+        res.send({success: true, data:result})
     }
 })
 
