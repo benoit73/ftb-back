@@ -36,7 +36,7 @@ function generateToken(res, userId)
 {
   const payload = { userId: userId };
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h'});
-  res.cookie('jwt', token, {maxAge: 60 * 60 * 1000, SameSite: 'lax'});
+  res.cookie('jwt', token, {maxAge: 4 * 60 * 60 * 1000, SameSite: 'lax'});
 }
 
 
